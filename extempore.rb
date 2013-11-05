@@ -10,10 +10,11 @@ class Extempore < Formula
   depends_on 'extempore-llvm' => :build
   # you'll need all these libraries at runtime to use the stdlib
   depends_on 'assimp' => :recommended
+  depends_on 'kissfft' => :recommended
   depends_on 'libdrawtext' => :recommended
   depends_on 'libsndfile' => :recommended
   depends_on 'libsoil' => :recommended
-  depends_on 'kissfft' => :recommended
+  depends_on 'rtmidi-c' => :recommended
   depends_on 'shivavg' => :recommended
 
   def install
