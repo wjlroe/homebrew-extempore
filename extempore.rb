@@ -31,6 +31,13 @@ class Extempore < Formula
       somewhere else, you can specify the location of the runtime/ dir
       with the --runtime command line argument.
 
+      If you're an emacs user, you'll want to set
+
+      (setq user-extempore-directory \"#{prefix}\")
+
+      in your .emacs, and probably have a look at the extras/.emacs file 
+      as well.
+
       For Extempore documentation, see http://benswift.me/extempore-docs/
     EOS
   end
