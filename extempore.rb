@@ -17,9 +17,9 @@ class Extempore < Formula
   depends_on 'shivavg' => :recommended
 
   def install
-    # for building from source
     ENV['EXT_LLVM_DIR'] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.2"
     system "./all.bash"
+    prefix.install Dir['*']
   end
 
   def caveats
