@@ -2,8 +2,7 @@ require 'formula'
 
 class Extempore < Formula
   homepage 'http://extempore.moso.com.au'
-  url 'http://extempore.moso.com.au/extras/extempore-Darwin-20130621.tar.gz'
-  sha1 '9338ac634adf4a2e447e1a3f84e4d100a773e67e'
+  head 'https://github.com/digego/extempore.git'
   keg_only "See 'Caveats' below."
 
   depends_on 'pcre'
@@ -14,18 +13,23 @@ class Extempore < Formula
   depends_on 'libdrawtext' => :recommended
   depends_on 'libsndfile' => :recommended
   depends_on 'libsoil' => :recommended
+  depends_on 'kissfft' => :recommended
   depends_on 'shivavg' => :recommended
 
   def install
     # for building from source
-    system "EXT_LLVM_DIR=#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.2 ./all.bash"
-
+    ENV['EXT_LLVM_DIR'] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.2"
+    system "./all.bash"
   end
 
   def caveats
     s = ''
     s += <<-EOS.undent
-      Extempore is now installed in #{prefix}
+      Extempore is now installed in #{prefix}. It has not been placed
+      on the path, since it expects to be run in its home directory with the
+      runtime/ subdirectory.  If you would like to run extempore from 
+      somewhere else, you can specify the location of the runtime/ dir
+      with the --runtime command line argument.
 
       For Extempore documentation, see http://benswift.me/extempore-docs/
     EOS
