@@ -2,11 +2,11 @@ require 'formula'
 
 class Extempore < Formula
   homepage 'http://extempore.moso.com.au'
-  url 'https://github.com/digego/extempore/archive/0.51.zip'
-  sha1 '0ed100330a4c0fc158a5af95b72216552be7391a'
+  url 'https://github.com/digego/extempore/archive/0.52.zip'
+  sha1 'b3ef808703b9b612e6706e82d91915679590f4fe'
   head 'https://github.com/digego/extempore.git'
-  keg_only "See 'Caveats' below."
-
+  keg_only ""
+  
   depends_on 'pcre' => :build
   depends_on 'portaudio' => :build
   depends_on 'extempore-llvm' => :build
@@ -19,7 +19,7 @@ class Extempore < Formula
   depends_on 'shivavg' => :recommended
 
   def install
-    ENV['EXT_LLVM_DIR'] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.2"
+    ENV['EXT_LLVM_DIR'] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.4.1"
     system "./all.bash"
     prefix.install Dir['*']
   end
@@ -35,12 +35,8 @@ class Extempore < Formula
       somewhere else, you can specify the location of the runtime/ dir
       with the --runtime command line argument.
 
-      If you're an emacs user, you'll want to set
-
-      (setq user-extempore-directory \"#{prefix}\"/)
-
-      in your .emacs, and probably have a look at the extras/.emacs file 
-      as well.
+      It's a good idea to build the standard library at this point: see
+      http://benswift.me/2013/12/16/building-the-extempore-standard-library/
 
       For Extempore documentation, see http://benswift.me/extempore-docs/
     EOS
