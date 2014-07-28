@@ -2,11 +2,11 @@ require 'formula'
 
 class Extempore < Formula
   homepage 'http://extempore.moso.com.au'
-  url 'https://github.com/digego/extempore/archive/0.52.zip'
-  sha1 'b3ef808703b9b612e6706e82d91915679590f4fe'
+  url 'https://github.com/digego/extempore/archive/0.53.zip'
+  sha1 '1d6a0f37341e5a03f11286c63c923fdd956757ce'
   head 'https://github.com/digego/extempore.git'
   keg_only ""
-  
+
   depends_on 'pcre' => :build
   depends_on 'portaudio' => :build
   depends_on 'extempore-llvm' => :build
@@ -27,7 +27,7 @@ class Extempore < Formula
   def caveats
     s = ''
     s += <<-EOS.undent
-      Extempore is now installed in #{prefix}. 
+      Extempore is now installed in #{prefix}
 
       It has not been linked into #{HOMEBREW_PREFIX} (and is therefore
       probably not on your $PATH) since it expects to be run in its
@@ -35,8 +35,11 @@ class Extempore < Formula
       somewhere else, you can specify the location of the runtime/ dir
       with the --runtime command line argument.
 
-      It's a good idea to build the standard library at this point: see
-      http://benswift.me/2013/12/16/building-the-extempore-standard-library/
+      It's a good idea to build the standard library at this point: you
+      can do this (in a shell) with:
+
+      > cd #{prefix}
+      > ./compile-stdlib.sh
 
       For Extempore documentation, see http://benswift.me/extempore-docs/
     EOS
