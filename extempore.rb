@@ -18,9 +18,17 @@ class Extempore < Formula
   depends_on 'rtmidi-c' => :recommended
   depends_on 'shivavg' => :recommended
 
+  option "with-stdlib", "(pre)compile the Extempore standard library"
+
   def install
     ENV['EXT_LLVM_DIR'] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.4.1"
     system "./all.bash"
+
+    if build.with? "stdlib"
+      ohai "(pre)compiling the Extempore standard library.  This may take a few minutes..."
+      system "./compile-stdlib.sh"
+    end
+    
     prefix.install Dir['*']
   end
 
