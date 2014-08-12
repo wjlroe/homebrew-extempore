@@ -19,7 +19,7 @@ class Extempore < Formula
   depends_on 'shivavg' => :recommended
 
   option "with-stdlib", "(pre)compile the Extempore standard library"
-  option "without-assets", "download the assets used in the example files"
+  option "with-assets", "download the assets used in the example files"
 
   def install
     ENV['EXT_LLVM_DIR'] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.4.1"
@@ -30,7 +30,7 @@ class Extempore < Formula
       system "./compile-stdlib.sh"
     end
 
-    unless build.without? "assets"
+    if build.with? "assets"
       system "curl", "-O", "http://extempore.moso.com.au/extras/assets.tgz"
       system "tar", "-xf", "assets.tgz"
       system "rm", "assets.tgz"
