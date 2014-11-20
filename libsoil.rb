@@ -2,9 +2,8 @@ require 'formula'
 
 class Libsoil < Formula
   homepage 'https://github.com/DeVaukz/SOIL'
-  url 'https://codeload.github.com/DeVaukz/SOIL/zip/master'
-  version '1.07'
-  sha1 '7114eb45fd2c8da5177e1dad663d4e09ce403842'
+  url 'https://github.com/DeVaukz/SOIL/archive/1.07.zip'
+  sha1 '6cbb7d800a49c8df33bbe7146c6c67fb454a9777'
 
   depends_on "cmake" => :build
 
