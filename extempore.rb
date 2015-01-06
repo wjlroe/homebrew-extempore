@@ -2,8 +2,8 @@ require 'formula'
 
 class Extempore < Formula
   homepage 'http://extempore.moso.com.au'
-  url 'https://github.com/digego/extempore/archive/0.58.zip'
-  sha1 '79bf1211f0b89490b5afe88fc5cfa600aaabef6b'
+  url 'https://github.com/digego/extempore/archive/0.59.zip'
+  sha1 '7908c41d699012b972075e38089ce6d94fe92988'
   head 'https://github.com/digego/extempore.git'
   keg_only ""
 
