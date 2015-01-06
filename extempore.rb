@@ -33,9 +33,9 @@ class Extempore < Formula
     if build.with? "assets"
       system "curl", "-O", "http://extempore.moso.com.au/extras/assets.tgz"
       system "tar", "-xf", "assets.tgz"
-      system "rm", "assets.tgz"
+      rm("assets.tgz")
     end
-    
+
     prefix.install Dir['*']
   end
 
