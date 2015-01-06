@@ -3,7 +3,7 @@ require 'formula'
 class Extempore < Formula
   homepage 'http://extempore.moso.com.au'
   url 'https://github.com/digego/extempore/archive/0.59.zip'
-  sha1 '7908c41d699012b972075e38089ce6d94fe92988'
+  sha1 '7f73d99086f91cdee48e75e52d377feb0f3718f6'
   head 'https://github.com/digego/extempore.git'
   keg_only ""
 
