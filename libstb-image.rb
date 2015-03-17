@@ -16,4 +16,21 @@ class LibstbImage < Formula
     include.install "stb_image.h"
     lib.install "libstb_image.dylib"
   end
+
+  def caveats
+    s = ''
+    s += <<-EOS.undent
+
+      This formula builds a shared-library version of the
+      image-related utilities from Sean T. Barrett's stb libraries.
+      It includes the API from
+
+      - stb_image.h
+      - stb_image_resize.h
+      - stb_image_write.h
+
+      It's probably most useful to Extempore users, but if you find it
+      helpful in other cases then go nuts.
+    EOS
+  end
 end
