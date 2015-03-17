@@ -1,19 +1,23 @@
 class LibstbImage < Formula
   homepage "https://github.com/nothings/stb"
-  url "https://raw.githubusercontent.com/nothings/stb/master/stb_image.h"
-  sha256 "37c9f8d3bf2e121bcab3a55ad5f01fd380365c67bbae69dc2b7c7eed7364291d"
+  head 'https://github.com/nothings/stb.git'
 
   def install
-    # split the header-only file into header and body parts (messy)
-    system "split -p \"ifdef STB_IMAGE_IMPLEMENTATION\" stb_image.h"
-    File.rename "xaa", "stb_image.h"
-    File.rename "xab", "stb_image.c"
-    # add the #include "stb_image.h" line to the new .c file
-    system "ed -s stb_image.c <<< $'1i\n#include \"stb_image.h\"\n.\nwq'"
+    # split the header-only files into header and body parts (messy)
+    files = ["stb_image.h", "stb_image_resize.h", "stb_image_write.h"]
+
+    files.each { |f|
+      cfile = f.gsub("\.h","\.c")
+      system "split -p \"ifdef STB_IMAGE_.*IMPLEMENTATION\" #{f}"
+      File.rename("xaa", f)
+      File.rename("xab", cfile)
+      # add the #include <header> line to the new .c file
+      system "ed -s #{cfile} <<< $'1i\n#include \"#{f}\"\n.\nwq'"
+    }
     # compile the shared lib
-    system ENV.cc, "-DSTB_IMAGE_IMPLEMENTATION", "-DSTBI_FAILURE_USERMSG", "-dynamiclib", "stb_image.c", "-o", "libstb_image.dylib"
+    system ENV.cc, "-DSTB_IMAGE_IMPLEMENTATION", "-DSTB_IMAGE_RESIZE_IMPLEMENTATION", "-DSTB_IMAGE_WRITE_IMPLEMENTATION", "-DSTBI_FAILURE_USERMSG", "-dynamiclib", *files.map{ |h| h.gsub("\.h","\.c") }, "-o", "libstb_image.dylib"
     # install all the things
-    include.install "stb_image.h"
+    include.install files
     lib.install "libstb_image.dylib"
   end
 
