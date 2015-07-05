@@ -3,7 +3,7 @@ require 'formula'
 class ExtemporeLlvm < Formula
   homepage  'http://llvm.org/'
   url       'http://llvm.org/releases/3.4.1/llvm-3.4.1.src.tar.gz'
-  sha1      '5795bd984399e7368d528166e18f6b71adb12b47'
+  sha1      '3711baa6f5ef9df07418ce76039fc3848a7bde7c'
   keg_only "This is a specially patched LLVM for use in building Extempore."
 
   option 'with-asan', 'Include support for -faddress-sanitizer (from compiler-rt)'
