@@ -17,6 +17,8 @@ class Extempore < Formula
   depends_on 'libsoil' => :recommended
   depends_on 'rtmidi-c' => :recommended
   depends_on 'shivavg' => :recommended
+  depends_on 'libnanovg' => :recommended
+  depends_on 'libstb-image' => :recommended
 
   option "with-stdlib", "(pre)compile the Extempore standard library"
   option "with-assets", "download the assets used in the example files"
