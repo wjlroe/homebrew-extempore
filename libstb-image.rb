@@ -1,24 +1,12 @@
 class LibstbImage < Formula
-  homepage "https://github.com/nothings/stb"
-  head 'https://github.com/nothings/stb.git'
+  homepage "https://github.com/benswift/stb"
+  head 'https://github.com/benswift/stb.git'
+
+  depends_on "cmake" => :build
 
   def install
-    # split the header-only files into header and body parts (messy)
-    files = ["stb_image.h", "stb_image_resize.h", "stb_image_write.h"]
-
-    files.each { |f|
-      cfile = f.gsub("\.h","\.c")
-      system "split -p \"ifdef STB_IMAGE_.*IMPLEMENTATION\" #{f}"
-      File.rename("xaa", f)
-      File.rename("xab", cfile)
-      # add the #include <header> line to the new .c file
-      system "ed -s #{cfile} <<< $'1i\n#include \"#{f}\"\n.\nwq'"
-    }
-    # compile the shared lib
-    system ENV.cc, "-DSTB_IMAGE_IMPLEMENTATION", "-DSTB_IMAGE_RESIZE_IMPLEMENTATION", "-DSTB_IMAGE_WRITE_IMPLEMENTATION", "-DSTBI_FAILURE_USERMSG", "-dynamiclib", *files.map{ |h| h.gsub("\.h","\.c") }, "-o", "libstb_image.dylib"
-    # install all the things
-    include.install files
-    lib.install "libstb_image.dylib"
+    system "cmake", ".", *std_cmake_args
+    system "make", "install"
   end
 
   def caveats
