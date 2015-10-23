@@ -1,47 +1,20 @@
-require 'formula'
-
 class ExtemporeLlvm < Formula
-  homepage  'http://llvm.org/'
-  url       'http://llvm.org/releases/3.4.1/llvm-3.4.1.src.tar.gz'
-  sha1      '3711baa6f5ef9df07418ce76039fc3848a7bde7c'
-  keg_only "This is a specially patched LLVM for use in building Extempore."
+  homepage  "http://llvm.org/"
+  url       "http://www.llvm.org/releases/3.7.0/llvm-3.7.0.src.tar.xz"
+  sha256    "ab45895f9dcdad1e140a3a79fd709f64b05ad7364e308c0e582c5b02e9cc3153"
+  keg_only  "This is a specially patched LLVM for use in building Extempore"
 
-  option 'with-asan', 'Include support for -faddress-sanitizer (from compiler-rt)'
-  option 'all-targets', 'Build all target backends'
-  option 'rtti', 'Build with C++ RTTI'
-  option 'disable-assertions', 'Speeds up LLVM, but provides less debug information'
+  depends_on "cmake" => :build
 
   def patches
-    # patch llparser (bugfix) for Extempore use
     DATA
   end
 
   def install
-    CompilerRt.new("compiler-rt").brew do
-      (buildpath/'projects/compiler-rt').install Dir['*']
-    end if build.include? 'with-asan'
-
-    ENV['REQUIRES_RTTI'] = '1' if build.include? 'rtti'
-
-    args = [
-      "--prefix=#{prefix}",
-      "--enable-optimized",
-      # As of LLVM 3.1, attempting to build ocaml bindings with Homebrew's
-      # OCaml 3.12.1 results in errors.
-      "--disable-bindings",
-    ]
-
-    if build.include? 'all-targets'
-      args << "--enable-targets=all"
-    else
-      args << "--enable-targets=host"
+    mkdir "build.cmake" do
+      system "cmake", "-DLLVM_ENABLE_TERMINFO=OFF", "-DLLVM_ENABLE_ZLIB=OFF", "..", *std_cmake_args
+      system "make", "install"
     end
-
-    args << "--disable-assertions" if build.include? 'disable-assertions'
-
-    system "./configure", *args
-    system "make install"
-
   end
 
   def caveats; <<-EOS.undent
@@ -51,27 +24,110 @@ class ExtemporeLlvm < Formula
     If you have any problems, raise them on extemporelang@googlegroups.com
     EOS
   end
-
 end
 
 __END__
-diff a/lib/AsmParser/LLParser.cpp b/lib/AsmParser/LLParser.cpp
---- a/lib/AsmParser/LLParser.cpp
-+++ b/lib/AsmParser/LLParser.cpp
-@@ -1349,8 +1349,14 @@ bool LLParser::ParseType(Type *&Result, bool AllowVoid) {
+--- a/include/llvm/MC/MCSectionCOFF.h	2015-04-11 12:11:45.000000000 +1000
++++ b/include/llvm/MC/MCSectionCOFF.h	2015-09-14 09:22:56.000000000 +1000
+@@ -16,7 +16,6 @@
+ 
+ #include "llvm/ADT/StringRef.h"
+ #include "llvm/MC/MCSection.h"
+-#include "llvm/Support/COFF.h"
+ 
+ namespace llvm {
+ class MCSymbol;
+
+--- a/lib/AsmParser/LLParser.cpp	2015-07-11 20:30:36.000000000 +1000
++++ b/lib/AsmParser/LLParser.cpp	2015-09-14 09:20:57.000000000 +1000
+@@ -1754,8 +1754,14 @@
      // If the type hasn't been defined yet, create a forward definition and
      // remember where that forward def'n was seen (in case it never is defined).
-     if (Entry.first == 0) {
+     if (!Entry.first) {
 -      Entry.first = StructType::create(Context, Lex.getStrVal());
 -      Entry.second = Lex.getLoc();
-+        // this here for extempore
-+  	if (M->getTypeByName(Lex.getStrVal())) {
-+           Entry.first = M->getTypeByName(Lex.getStrVal());
-+           Entry.second = SMLoc();
-+        } else {	
-+      	   Entry.first = StructType::create(Context, Lex.getStrVal());
-+           Entry.second = Lex.getLoc();
-+	}
++      // this here for extempore
++      if (M->getTypeByName(Lex.getStrVal())) {
++        Entry.first = M->getTypeByName(Lex.getStrVal());
++        Entry.second = SMLoc();
++      } else {
++        Entry.first = StructType::create(Context, Lex.getStrVal());
++        Entry.second = Lex.getLoc();
++      }
      }
      Result = Entry.first;
      Lex.Lex();
+
+--- a/lib/CodeGen/TargetLoweringObjectFileImpl.cpp	2015-07-01 05:10:31.000000000 +1000
++++ b/lib/CodeGen/TargetLoweringObjectFileImpl.cpp	2015-09-14 09:23:40.000000000 +1000
+@@ -32,6 +32,7 @@
+ #include "llvm/MC/MCStreamer.h"
+ #include "llvm/MC/MCSymbolELF.h"
+ #include "llvm/MC/MCValue.h"
++#include "llvm/Support/COFF.h"
+ #include "llvm/Support/Dwarf.h"
+ #include "llvm/Support/ELF.h"
+ #include "llvm/Support/ErrorHandling.h"
+
+--- a/lib/ExecutionEngine/MCJIT/MCJIT.cpp	2015-07-31 02:31:16.000000000 +1000
++++ b/lib/ExecutionEngine/MCJIT/MCJIT.cpp	2015-09-14 09:21:28.000000000 +1000
+@@ -524,6 +524,17 @@
+         rv.IntVal = APInt(32, PF(ArgValues[0].IntVal.getZExtValue()));
+         return rv;
+       }
++      if (FTy->getNumParams() == 1 &&
++          RetTy->isVoidTy() &&
++          FTy->getParamType(0)->isPointerTy()) {
++        GenericValue rv;
++        //void (*PF)(char *) = (void(*)(char *))(intptr_t)FPtr;
++        //printf("are symbols available: %d\n",isSymbolSearchingDisabled());
++        void (*PF)(char *) = (void(*)(char *))FPtr;
++        char* mzone = (char*) GVTOP(ArgValues[0]);
++        PF(mzone);
++        return rv;
++      }      
+       break;
+     }
+   }
+
+--- a/lib/MC/MCContext.cpp	2015-06-23 21:31:32.000000000 +1000
++++ b/lib/MC/MCContext.cpp	2015-09-14 09:24:01.000000000 +1000
+@@ -23,6 +23,7 @@
+ #include "llvm/MC/MCSymbolCOFF.h"
+ #include "llvm/MC/MCSymbolELF.h"
+ #include "llvm/MC/MCSymbolMachO.h"
++#include "llvm/Support/COFF.h"
+ #include "llvm/Support/ELF.h"
+ #include "llvm/Support/ErrorHandling.h"
+ #include "llvm/Support/FileSystem.h"
+
+--- a/lib/MC/MCObjectFileInfo.cpp	2015-06-25 10:28:42.000000000 +1000
++++ b/lib/MC/MCObjectFileInfo.cpp	2015-09-14 09:24:17.000000000 +1000
+@@ -16,6 +16,7 @@
+ #include "llvm/MC/MCSectionCOFF.h"
+ #include "llvm/MC/MCSectionELF.h"
+ #include "llvm/MC/MCSectionMachO.h"
++#include "llvm/Support/COFF.h"
+ using namespace llvm;
+ 
+ static bool useCompactUnwind(const Triple &T) {
+
+--- a/lib/MC/MCSectionCOFF.cpp	2015-06-09 10:31:39.000000000 +1000
++++ b/lib/MC/MCSectionCOFF.cpp	2015-09-14 09:24:25.000000000 +1000
+@@ -11,6 +11,7 @@
+ #include "llvm/MC/MCAsmInfo.h"
+ #include "llvm/MC/MCContext.h"
+ #include "llvm/MC/MCSymbol.h"
++#include "llvm/Support/COFF.h"
+ #include "llvm/Support/raw_ostream.h"
+ using namespace llvm;
+ 
+--- a/lib/Target/X86/X86TargetObjectFile.cpp	2015-06-27 04:55:48.000000000 +1000
++++ b/lib/Target/X86/X86TargetObjectFile.cpp	2015-09-14 09:25:03.000000000 +1000
+@@ -16,6 +16,7 @@
+ #include "llvm/MC/MCSectionCOFF.h"
+ #include "llvm/MC/MCSectionELF.h"
+ #include "llvm/MC/MCValue.h"
++#include "llvm/Support/COFF.h"
+ #include "llvm/Support/Dwarf.h"
+ #include "llvm/Target/TargetLowering.h"
