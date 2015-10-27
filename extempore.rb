@@ -22,9 +22,17 @@ class Extempore < Formula
     ENV["EXT_LLVM_DIR"] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.7.0"
     system "cmake", "-DIN_TREE=OFF", ".", *std_cmake_args
     system "make", "install"
-    system "make", "aot" if build.with? "aot"
-    system "make", "aot-extended" if build.with? "aot-extended"
-    system "make", "assets" if build.with? "aot-extended"
+
+    if build.with? "aot"
+      ohai "AOT-compiling the Extempore standard library.  This may take several minutes..."
+      system "make", "aot" if build.with? "aot"
+    end
+
+    if build.with? "aot-extended"
+      ohai "AOT-compiling the (extended) Extempore standard library.  This may take several minutes..."
+      system "make", "aot-extended" if build.with? "aot-extended"
+      system "make", "assets" if build.with? "aot-extended"
+    end
   end
 
   def caveats; <<-EOS.undent
