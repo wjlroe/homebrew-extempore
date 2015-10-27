@@ -12,6 +12,7 @@ class ExtemporeLlvm < Formula
 
   def install
     mkdir "build.cmake" do
+      ohai "Compiling LLVM 3.7.0 from source - this may take a while..."
       system "cmake", "-DLLVM_ENABLE_TERMINFO=OFF", "-DLLVM_ENABLE_ZLIB=OFF", "..", *std_cmake_args
       system "make", "install"
     end
