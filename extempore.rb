@@ -4,25 +4,27 @@ class Extempore < Formula
   # sha256   "TODO"
   head     "https://github.com/digego/extempore.git"
 
-  option "with-stdlib", "AOT-compile the standard library"
+  option "with-aot", "AOT-compile the standard library"
+  option "with-aot-extended", "AOT-compile the extended standard library"
 
   depends_on "cmake" => :build
   depends_on "extempore-llvm"
   # stdlib dependencies
-  depends_on "assimp" if build.with? "stdlib"
-  depends_on "glfw3" if build.with? "stdlib"
-  depends_on "libkiss-fft" if build.with? "stdlib"
-  depends_on "libnanovg" if build.with? "stdlib"
-  depends_on "libsndfile" if build.with? "stdlib"
-  depends_on "libstb-image" if build.with? "stdlib"
-  depends_on "portmidi" if build.with? "stdlib"
+  depends_on "assimp" if build.with? "aot-extended"
+  depends_on "glfw3" if build.with? "aot-extended"
+  depends_on "libkiss-fft" if build.with? "aot-extended"
+  depends_on "libnanovg" if build.with? "aot-extended"
+  depends_on "libsndfile" if build.with? "aot-extended"
+  depends_on "libstb-image" if build.with? "aot-extended"
+  depends_on "portmidi" if build.with? "aot-extended"
 
   def install
     ENV["EXT_LLVM_DIR"] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.7.0"
     system "cmake", "-DIN_TREE=OFF", ".", *std_cmake_args
     system "make", "install"
-    system "make", "aot_stdlib"
-    system "make", "assets" if build.with? "stdlib"
+    system "make", "aot" if build.with? "aot"
+    system "make", "aot-extended" if build.with? "aot-extended"
+    system "make", "assets" if build.with? "aot-extended"
   end
 
   def caveats; <<-EOS.undent
