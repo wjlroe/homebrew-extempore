@@ -4,19 +4,19 @@ class Extempore < Formula
   # sha256   "TODO"
   head     "https://github.com/digego/extempore.git"
 
-  option "with-aot", "AOT-compile the standard library"
-  option "with-aot-extended", "AOT-compile the extended standard library"
+  option "without-aot", "ahead-of-time-compile the libraries for faster startup"
+  option "with-extended", "download additional libraries for added functionality"
 
   depends_on "cmake" => :build
   depends_on "extempore-llvm"
   # stdlib dependencies
-  depends_on "assimp" if build.with? "aot-extended"
-  depends_on "glfw3" if build.with? "aot-extended"
-  depends_on "libkiss-fft" if build.with? "aot-extended"
-  depends_on "libnanovg" if build.with? "aot-extended"
-  depends_on "libsndfile" if build.with? "aot-extended"
-  depends_on "libstb-image" if build.with? "aot-extended"
-  depends_on "portmidi" if build.with? "aot-extended"
+  depends_on "assimp" if build.with? "extended"
+  depends_on "glfw3" if build.with? "extended"
+  depends_on "libkiss-fft" if build.with? "extended"
+  depends_on "libnanovg" if build.with? "extended"
+  depends_on "libsndfile" if build.with? "extended"
+  depends_on "libstb-image" if build.with? "extended"
+  depends_on "portmidi" if build.with? "extended"
 
   def install
     ENV["EXT_LLVM_DIR"] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.7.0"
@@ -25,13 +25,14 @@ class Extempore < Formula
 
     if build.with? "aot"
       ohai "AOT-compiling the Extempore standard library.  This may take several minutes..."
-      system "make", "aot" if build.with? "aot"
+      system "make", "aot"
     end
 
-    if build.with? "aot-extended"
+    if build.with? "extended"
       ohai "AOT-compiling the (extended) Extempore standard library.  This may take several minutes..."
-      system "make", "aot-extended" if build.with? "aot-extended"
-      system "make", "assets" if build.with? "aot-extended"
+      system "make", "aot_extended" if build.with? "aot"
+      ohai "downloading Extempore assets..."
+      system "make", "assets"
     end
   end
 
