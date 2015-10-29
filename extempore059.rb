@@ -6,21 +6,21 @@ class Extempore < Formula
   sha1 '5795bd984399e7368d528166e18f6b71adb12b47'
   keg_only ""
 
+  option "without-aot", "ahead-of-time-compile the libraries for faster startup"
+  option "with-extended", "download additional libraries for added functionality"
+
   depends_on 'pcre' => :build
   depends_on 'portaudio' => :build
-  depends_on 'extempore-llvm' => :build
+  depends_on 'extempore-llvm341' => :build
   # you'll need all these libraries at runtime to use the extended stdlib
-  depends_on 'assimp' => :recommended
-  depends_on 'kissfft' => :recommended
-  depends_on 'libsndfile' => :recommended
-  depends_on 'libsoil' => :recommended
-  depends_on 'rtmidi-c' => :recommended
-  depends_on 'shivavg' => :recommended
-  depends_on 'libnanovg' => :recommended
-  depends_on 'libstb-image' => :recommended
-
-  option "with-aot", "AOT-compile the (extended) Extempore standard library"
-  option "with-assets", "download the assets used in the example files"
+  depends_on 'assimp' => :recommended if build.with? "extended"
+  depends_on 'kissfft' => :recommended if build.with? "extended"
+  depends_on 'libsndfile' => :recommended if build.with? "extended"
+  depends_on 'libsoil' => :recommended if build.with? "extended"
+  depends_on 'rtmidi-c' => :recommended if build.with? "extended"
+  depends_on 'shivavg' => :recommended if build.with? "extended"
+  depends_on 'libnanovg' => :recommended if build.with? "extended"
+  depends_on 'libstb-image' => :recommended if build.with? "extended"
 
   def install
     ENV['EXT_LLVM_DIR'] = "#{HOMEBREW_PREFIX}/Cellar/extempore-llvm/3.4.1"
@@ -28,10 +28,13 @@ class Extempore < Formula
 
     if build.with? "aot"
       ohai "AOT-compiling the Extempore standard library.  This may take a few minutes..."
-      system "./compile-stdlib.sh"
+      if build.with? "extended"
+        system "./compile-stdlib.sh"
+      else
+        system "./compile-stdlib-core.sh"
     end
 
-    if build.with? "assets"
+    if build.with? "extended"
       system "curl", "-O", "http://extempore.moso.com.au/extras/assets.tgz"
       system "tar", "-xf", "assets.tgz"
       rm("assets.tgz")
