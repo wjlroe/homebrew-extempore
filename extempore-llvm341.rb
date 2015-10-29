@@ -1,6 +1,6 @@
 require 'formula'
 
-class ExtemporeLlvm < Formula
+class ExtemporeLlvm341 < Formula
   homepage  'http://llvm.org/'
   url       'http://llvm.org/releases/3.4.1/llvm-3.4.1.src.tar.gz'
   sha1      '3711baa6f5ef9df07418ce76039fc3848a7bde7c'
