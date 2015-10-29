@@ -1,7 +1,7 @@
 class Extempore < Formula
   homepage "http://extempore.moso.com.au"
   url      "https://github.com/digego/extempore/archive/0.6.0.tar.gz"
-  sha256   "db7d1e1c72b587fa32e06f4c586ff38864baf7b6e8b5acd74a1b4b11c49c7697"
+  sha256   "dab818af3277ee17394ebbb8beaa406f56fda7309146b42263956553593af692"
   head     "https://github.com/digego/extempore.git"
 
   option "without-aot", "ahead-of-time-compile the libraries for faster startup"
