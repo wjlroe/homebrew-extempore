@@ -2,8 +2,8 @@ require 'formula'
 
 class Extempore059 < Formula
   homepage 'http://extempore.moso.com.au'
-  url 'https://github.com/digego/extempore/archive/0.5.9.zip'
-  sha1 '5795bd984399e7368d528166e18f6b71adb12b47'
+  url 'https://github.com/digego/extempore/archive/0.5.9.tar.gz'
+  sha256 'a5060f94cdab1d44c1c865c11d938e88f73d75345d74def66407501c7b3d5d14'
   keg_only ""
 
   option "without-aot", "ahead-of-time-compile the libraries for faster startup"
