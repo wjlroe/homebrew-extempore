@@ -32,6 +32,7 @@ class Extempore < Formula
         system "./compile-stdlib.sh"
       else
         system "./compile-stdlib-core.sh"
+      end
     end
 
     if build.with? "extended"
