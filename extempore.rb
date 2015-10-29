@@ -36,7 +36,9 @@ class Extempore < Formula
     end
   end
 
-  def caveats; <<-EOS.undent
+  def caveats
+    s = ''
+    s += <<-EOS.undent
     Extempore now lives in "#{HOMEBREW_PREFIX}/bin, so you no longer
     have to cd into #{prefix} to use it.
 

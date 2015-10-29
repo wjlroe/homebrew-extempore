@@ -18,7 +18,9 @@ class ExtemporeLlvm < Formula
     end
   end
 
-  def caveats; <<-EOS.undent
+  def caveats
+    s = ''
+    s += <<-EOS.undent
     This is a specifically patched version of LLVM for building Extempore.
     It shouldn't get in the way of any other LLVM install.
 
