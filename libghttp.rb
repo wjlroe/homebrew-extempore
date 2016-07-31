@@ -3,7 +3,7 @@ require "formula"
 class Libghttp < Formula
   homepage "http://linux.maruhn.com/sec/libghttp.html"
   url "https://github.com/benswift/libghttp/archive/1.0.9.zip"
-  sha1 "884e32331f338eda5d4fd5facf01bc26b6b5d607"
+  sha256 "25b5440bbaddd7f6c6a1cd68769cf59c70c7af80a19dcb54797ef1a3d526d57d"
 
   def install
     system "make"

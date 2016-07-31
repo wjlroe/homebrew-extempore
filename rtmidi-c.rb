@@ -3,7 +3,7 @@ require 'formula'
 class RtmidiC < Formula
   homepage 'https://github.com/benswift/rtmidi'
   url 'https://github.com/benswift/rtmidi/archive/master.zip'
-  sha1 '3d34e3cbe3893121ee540fe90a8c164a9d846902'
+  sha256 '79dbd9fef0433ed5666b562151dd1f7d9010de71c4f09b236c75029b6f399976'
   version '0.2'
 
   def install
