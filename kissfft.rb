@@ -4,7 +4,7 @@ class Kissfft < Formula
   homepage 'http://sourceforge.net/projects/kissfft/'
   url 'http://downloads.sourceforge.net/project/kissfft/kissfft/v1_3_0/kiss_fft130.zip'
   version '1.3.0'
-  sha1 '292f06a7a6fcb658e01d97dad71cfd679741b3fb'
+  sha256 '262392013ddcfa3402144d57632c4dd146ab5e88ee650724a6845322f1efa178'
 
   def install
     system ENV.cc, "kiss_fft.c", "tools/kiss_fftr.c",
